@@ -7,9 +7,9 @@ import { resolve } from 'path'
 export default function Home() {
 
   /*
-  * **
-  * Handle the File Upload Form Submission
-  * **
+  * *
+  * Handle the file upload form submission
+  * *
   */
   async function uploadPDF(data: FormData) {
       'use server'
@@ -27,7 +27,7 @@ export default function Home() {
       // Write the file buffer to the filesystem
       const path = resolve(`./public/pdf_uploads/${file.name}`)
       await writeFile(path, buffer)
-      // Set a Cookie with the File URL
+      // Set a Cookie with the File URL & name
       cookies().set('uploadedFileURL', `${process.env.BASE_URL}/pdf_uploads/${file.name}`)
       cookies().set('uploadedFileName', file.name)
 
@@ -39,40 +39,40 @@ export default function Home() {
   }
 
   /*
-  * **
-  * Create & Prepare a Docuemnt from the Uploaded File
-  * **
+  * *
+  * Create & prepare a document from the uploaded file
+  * *
   */
   async function createDocumentFromPDF (data:formSubmission) {
     "use server"
 
 
-    // Get the File URL & Name from the Cookies
+    // Get the file URL & name from the cookies
     const pdfURL = data.get('pdfURL')
     const pdfFileName = cookies().get('uploadedFileName')?.value
 
-    // Create a Document Using the Uplaoded PDF Template
+    // Create a document using the uplaoded PDF template
     const result = await foxitApiHelper.createDocumentFromURL(pdfURL, pdfFileName)
     
     let signingSessionUrl = result.embeddedSigningSessions[0].embeddedSessionURL
     cookies().set('foxitEmbeddedSigningLink', signingSessionUrl)
 
-    // Create a Webhook Channel
+    // Create a webhook channel
     await foxitApiHelper.createWebhookChannel()
 
-    // Refresh Page
+    // Refresh the page
     redirect(process.env.BASE_URL, 'replace')
   }
 
 
-  // Get the Embedded Signing Session Link from the Cookies
+  // Get the embedded signing session link from the cookies
   let EmbeddedSigningLink = cookies().get('foxitEmbeddedSigningLink')?.value
-  // Get the uploaded File URL from the Cookies
+  // Get the uploaded file URL from the cookies
   let templatePdfUrl = cookies().get('uploadedFileURL')?.value
 
   /*
   * **
-  * Render the Page
+  * Render the page
   * **
   */
   return (

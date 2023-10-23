@@ -19,11 +19,11 @@ class foxitApiHelper{
 
     /*
     **
-    * Create a Document form URL and Send it to Signers
+    * Create a document from a URL and send it to the signing parties
     **
     */
     static async createDocumentFromURL(pdfUrl, pdfFileName){
-      // Intitiante the API Client Using Foxit SDK
+      // Create an SDK Client instance
       const client = new Client({
         timeout: 0,
         environment: 'US Server',
@@ -50,7 +50,6 @@ class foxitApiHelper{
         fileUrls: bodyFileUrls,
         fileNames: bodyFileNames,
         parties: bodyParties,
-        numberOfParties: 1,
         createEmbeddedSigningSession: true,
         processTextTags: true,
         processAcroFields: true,
@@ -76,12 +75,12 @@ class foxitApiHelper{
     }
 
     /*
-    **
-    * Create a Webhook Channel
-    **
+    * *
+    * Create a webhook channel
+    * *
     */
     static async createWebhookChannel(){
-      // Intitiante the API Client Using Foxit SDK
+      // Create an SDK Client instance
       const client = new Client({
         timeout: 0,
         environment: 'US Server',
@@ -95,7 +94,7 @@ class foxitApiHelper{
       bodyEvents.folderViewed = true;
       bodyEvents.folderSigned = true;
 
-      // Create the Request body
+      // Create the request body
       const body: WebhookCreation = {
         channelName: 'Viewed and Signed Webhook',
         webhookUrl: `${process.env.BASE_URL}/api/foxit-webhooks`,

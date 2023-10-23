@@ -164,4 +164,4 @@ yarn-error.log*
 next-env.d.ts
 
 # App
-/public/pdf_uploads/*
+#/public/pdf_uploads/*

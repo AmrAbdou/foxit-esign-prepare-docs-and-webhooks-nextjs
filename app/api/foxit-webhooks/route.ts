@@ -2,9 +2,9 @@ import type { NextRequest, NextResponse } from "next/server";
 
 export async function POST(req: NextRequest, res: NextResponse) {
 
-  // Implemeting Basic Error Handling use Try/Catch
+  // Implemet basic error handling using try/catch
   try {
-    // Get the webhook request object and log it to the Console
+    // Get the webhook request object and log it to the console
     const webhookData = await req.json();
     console.log(webhookData);
 
