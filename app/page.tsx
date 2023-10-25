@@ -1,4 +1,4 @@
-import { foxitApiHelper } from '../foxit-api-helper.ts'
+import { foxitApiHelper } from '../foxit-api-helper'
 import { cookies } from 'next/headers'
 import { redirect } from 'next/navigation'
 import { writeFile } from 'fs/promises'
@@ -28,8 +28,10 @@ export default function Home() {
       const path = resolve(`./public/pdf_uploads/${file.name}`)
       await writeFile(path, buffer)
       // Set a Cookie with the File URL & name
-      cookies().set('uploadedFileURL', `${process.env.BASE_URL}/pdf_uploads/${file.name}`)
-      cookies().set('uploadedFileName', file.name)
+      let uploadedFileURL: string = `${process.env.BASE_URL}/pdf_uploads/${file.name}`
+      let uploadedFileName: string = file.name
+      cookies().set('uploadedFileURL', uploadedFileURL)
+      cookies().set('uploadedFileName', uploadedFileName)
 
       // Log the file path & URL
       console.log(`Uploaded File Path: ${path}`)
@@ -43,32 +45,37 @@ export default function Home() {
   * Create & prepare a document from the uploaded file
   * *
   */
-  async function createDocumentFromPDF (data:formSubmission) {
+  async function createDocumentFromPDF (data: FormData) {
     "use server"
 
-
     // Get the file URL & name from the cookies
-    const pdfURL = data.get('pdfURL')
-    const pdfFileName = cookies().get('uploadedFileName')?.value
+    let pdfURL: string = data.get('pdfURL')!;
+    console.log(typeof pdfURL)
+    let pdfFileName: string = cookies().get('uploadedFileName')?.value!;
 
     // Create a document using the uplaoded PDF template
-    const result = await foxitApiHelper.createDocumentFromURL(pdfURL, pdfFileName)
+    let result = await foxitApiHelper.createDocumentFromURL(pdfURL, pdfFileName)
+
     
-    let signingSessionUrl = result.embeddedSigningSessions[0].embeddedSessionURL
-    cookies().set('foxitEmbeddedSigningLink', signingSessionUrl)
+    if (result){
+      let signingSessionUrl: string = result.embeddedSigningSessions[0].embeddedSessionURL
+      cookies().set('foxitEmbeddedSigningLink', signingSessionUrl)
 
-    // Create a webhook channel
-    await foxitApiHelper.createWebhookChannel()
+      // Create a webhook channel
+      await foxitApiHelper.createWebhookChannel()
 
-    // Refresh the page
-    redirect(process.env.BASE_URL, 'replace')
+      // Refresh the page
+      const base_url: string = process.env.BASE_URL!;
+      redirect(base_url)!;
+    }
   }
 
-
   // Get the embedded signing session link from the cookies
-  let EmbeddedSigningLink = cookies().get('foxitEmbeddedSigningLink')?.value
+  let EmbeddedSigningLink: string | null | undefined = null;
+  EmbeddedSigningLink = EmbeddedSigningLink ?? cookies().get('foxitEmbeddedSigningLink')?.value;
   // Get the uploaded file URL from the cookies
-  let templatePdfUrl = cookies().get('uploadedFileURL')?.value
+  let templatePdfUrl : string | null | undefined = null;
+  templatePdfUrl = templatePdfUrl ?? cookies().get('uploadedFileURL')?.value;
 
   /*
   * **
@@ -78,7 +85,7 @@ export default function Home() {
   return (
     <main className="bg-slate-600 flex min-h-screen flex-col items-center justify-between p-20">
     <div className="w-4/5 bg-slate-700 p-10">
-      <h1 className="text-4xl border-b-2 font-bold py-5 mb-4">Prepare and Send a document for eSigning</h1>
+      <h1 className="text-4xl border-b-2 font-bold py-5 mb-4">Prepare and Send a Document for eSigning</h1>
       <div className="flex p-4">
         <div className="w-1/4 p-4 content-center flex-col">
           <div className="flex-col">
@@ -110,9 +117,11 @@ export default function Home() {
               defaultValue={templatePdfUrl}
               required
             />
-            <button className="w-full px-4 py-2 bg-blue-500 text-white rounded-r-md mb-8">
-              Create & Send a Document
-           </button>
+            <input 
+              type="submit"
+              className="w-full px-4 py-2 bg-blue-500 text-white rounded-r-md mb-8"
+              defaultValue="Create & Send a Document"
+           />
            </form>
           </div>
         </div>

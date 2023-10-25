@@ -7,8 +7,9 @@ import {
   URLEnvelope,
   WebhookCreation,
   WebhookEvents,
-  WebhooksAPIController
-} from './foxit_sdk/src/index.ts';
+  WebhooksAPIController,
+  PermissionsEnum
+} from './foxit_sdk/src/index';
 
 class foxitApiHelper{
 
@@ -22,11 +23,11 @@ class foxitApiHelper{
     * Create a document from a URL and send it to the signing parties
     **
     */
-    static async createDocumentFromURL(pdfUrl, pdfFileName){
+    static async createDocumentFromURL(pdfUrl: string, pdfFileName: string): Promise<any>  {
       // Create an SDK Client instance
       const client = new Client({
         timeout: 0,
-        environment: 'US Server',
+        //environment: Environment.USServer,
         accessToken: process.env.FOXIT_ACCESS_TOKEN
       });
 
@@ -39,7 +40,7 @@ class foxitApiHelper{
         firstName: 'John',
         lastName: 'Doe',
         emailId: 'youremail@gmail.com',
-        permission: 'FILL_FIELDS_AND_SIGN',
+        permission: PermissionsEnum.FILLFIELDSANDSIGN,
         sequence: 1,
       };
 
@@ -79,11 +80,11 @@ class foxitApiHelper{
     * Create a webhook channel
     * *
     */
-    static async createWebhookChannel(){
+    static async createWebhookChannel(): Promise<any> {
       // Create an SDK Client instance
       const client = new Client({
         timeout: 0,
-        environment: 'US Server',
+        //environment: Environment.USServer,
         accessToken: process.env.FOXIT_ACCESS_TOKEN
 
       });
@@ -107,6 +108,7 @@ class foxitApiHelper{
         const { result, ...httpResponse } = await webhooksAPIController.createWebhookChannel(body);
         console.log('result:')
         console.log(result)
+        return result
       } catch(error) {
         if (error instanceof ApiError) {
           const errors = error.result;
