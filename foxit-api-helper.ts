@@ -27,7 +27,6 @@ class foxitApiHelper{
       // Create an SDK Client instance
       const client = new Client({
         timeout: 0,
-        //environment: Environment.USServer,
         accessToken: process.env.FOXIT_ACCESS_TOKEN
       });
 
@@ -84,7 +83,6 @@ class foxitApiHelper{
       // Create an SDK Client instance
       const client = new Client({
         timeout: 0,
-        //environment: Environment.USServer,
         accessToken: process.env.FOXIT_ACCESS_TOKEN
 
       });

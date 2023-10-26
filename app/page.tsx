@@ -14,7 +14,7 @@ export default function Home() {
   async function uploadPDF(data: FormData) {
       'use server'
 
-      // get the file
+      // Get the file
       const file: File | null = data.get('pdfFileUpload') as unknown as File
       if (!file) {
         throw new Error('No file uploaded')
@@ -24,16 +24,16 @@ export default function Home() {
       const bytes = await file.arrayBuffer()
       const buffer = Buffer.from(bytes)
 
-      // Write the file buffer to the filesystem
+      // Write the file buffer to the file system
       const path = resolve(`./public/pdf_uploads/${file.name}`)
       await writeFile(path, buffer)
-      // Set a Cookie with the File URL & name
+      // Set cookies with the file URL and name
       let uploadedFileURL: string = `${process.env.BASE_URL}/pdf_uploads/${file.name}`
       let uploadedFileName: string = file.name
       cookies().set('uploadedFileURL', uploadedFileURL)
       cookies().set('uploadedFileName', uploadedFileName)
 
-      // Log the file path & URL
+      // Log the file path and URL
       console.log(`Uploaded File Path: ${path}`)
       console.log(cookies().get('uploadedFileURL')?.value)
 
@@ -42,7 +42,7 @@ export default function Home() {
 
   /*
   * *
-  * Create & prepare a document from the uploaded file
+  * Create and prepare a document from the uploaded file
   * *
   */
   async function createDocumentFromPDF (data: FormData) {
